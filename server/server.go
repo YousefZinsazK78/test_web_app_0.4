@@ -25,9 +25,9 @@ func (s *Server) Serve(port string) {
 	handler.SetDb(s.db)
 	//handle incoming post request
 	http.HandleFunc("/createPost", handler.CreatePost)
-	http.HandleFunc("/updatePost", handler.CreatePost)
-	http.HandleFunc("/readPost", handler.CreatePost)
-	http.HandleFunc("/deletePost", handler.CreatePost)
+	http.HandleFunc("/updatePost", handler.UpdatePost)
+	http.HandleFunc("/readPost", handler.ReadPost)
+	http.HandleFunc("/deletePost", handler.DeletePost)
 	//handle incoming author request
 	http.HandleFunc("/createAuthor", handler.CreateAuthor)
 	http.HandleFunc("/readAuthor", handler.ReadAuthor)
