@@ -99,6 +99,34 @@ func UpdatePost(w http.ResponseWriter, r *http.Request) {
 
 }
 
+func DeletePost(w http.ResponseWriter, r *http.Request) {
+	log.Print("/DeletePost")
+	switch r.Method {
+	case http.MethodDelete:
+		var post types.Post
+		defer r.Body.Close()
+		if err := json.NewDecoder(r.Body).Decode(&post); err != nil {
+			log.Fatal(err.Error())
+		}
+		result, err := db.Exec("DELETE FROM post_tbl WHERE ID=?", post.ID)
+		if err != nil {
+			log.Fatal("error in delete request handling...", err)
+			return
+		} else {
+			res, err := result.RowsAffected()
+			if err != nil {
+				log.Fatal("error in delete request handling...", err)
+				return
+			}
+			fmt.Fprint(w, "delete successfully affected...")
+			fmt.Fprint(w, res)
+		}
+	default:
+		log.Fatal("invalid method!😑")
+	}
+
+}
+
 func CreateAuthor(w http.ResponseWriter, r *http.Request) {
 	log.Print("/CreateAuthor")
 	switch r.Method {
