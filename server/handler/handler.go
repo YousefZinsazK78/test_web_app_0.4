@@ -38,6 +38,39 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 
 }
 
+func ReadPost(w http.ResponseWriter, r *http.Request) {
+	log.Print("/ReadPost")
+	switch r.Method {
+	case http.MethodGet:
+		var posts []types.Post
+
+		rows, err := db.Query("SELECT * FROM post_tbl")
+		if err != nil {
+			log.Fatal(err)
+			return
+		}
+		defer rows.Close()
+		for rows.Next() {
+			var postItem types.Post
+			if err := rows.Scan(&postItem.ID, &postItem.Title, &postItem.Description, &postItem.AuthorID); err != nil {
+				log.Fatal("put post to postitem has err", err)
+				return
+			}
+			posts = append(posts, postItem)
+		}
+
+		if err := rows.Err(); err != nil {
+			log.Fatal("err in rows.Err", err)
+			return
+		}
+		//return json encoded data (posts data)
+		json.NewEncoder(w).Encode(posts)
+	default:
+		log.Fatal("invalid method 😑")
+	}
+
+}
+
 func UpdatePost(w http.ResponseWriter, r *http.Request) {
 	log.Print("/UpdatePost")
 	switch r.Method {
