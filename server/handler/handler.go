@@ -38,6 +38,34 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 
 }
 
+func UpdatePost(w http.ResponseWriter, r *http.Request) {
+	log.Print("/UpdatePost")
+	switch r.Method {
+	case http.MethodPut:
+		var postBlog types.Post
+		defer r.Body.Close()
+		if err := json.NewDecoder(r.Body).Decode(&postBlog); err != nil {
+			log.Fatal(err.Error())
+		}
+		result, err := db.Exec("UPDATE post_tbl SET Title=? WHERE ID=?", postBlog.Title, postBlog.ID)
+		if err != nil {
+			log.Fatal("error in update request handling...", err)
+			return
+		} else {
+			res, err := result.RowsAffected()
+			if err != nil {
+				log.Fatal("error in update request handling...", err)
+				return
+			}
+			fmt.Fprint(w, "update successful...")
+			fmt.Fprint(w, res)
+		}
+	default:
+		log.Fatal("invalid method 😑")
+	}
+
+}
+
 func CreateAuthor(w http.ResponseWriter, r *http.Request) {
 	log.Print("/CreateAuthor")
 	switch r.Method {
